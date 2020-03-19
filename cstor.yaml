@@ -1,0 +1,40 @@
+---
+kind: StoragePoolClaim
+apiVersion: openebs.io/v1alpha1
+metadata:
+  name: cstor-spc
+  annotations:
+    cas.openebs.io/config: |
+      - name: PoolResourceRequests
+        value: |-
+          memory: 1Gi
+      - name: PoolResourceLimits
+        value: |-
+          memory: 2Gi
+spec:
+  name: cstor-spc
+  type: disk
+  poolSpec:
+    poolType: striped
+  blockDevices:
+    blockDeviceList:
+      - blockdevice-762824cf8570fc62ed8596f3356d879c
+      - blockdevice-97c200dd6f367a0324029998cdf47918
+      - blockdevice-b5c17886c73d89d6162f9ce3aac58e8e
+      - blockdevice-e927d12d98e7fa32fd5870e1397b7e37
+
+      
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: cstor
+  annotations:
+    openebs.io/cas-type: cstor
+    cas.openebs.io/config: |
+      - name: StoragePoolClaim
+        value: "cstor-spc"
+      - name: ReplicaCount
+        value: "3"
+    storageclass.kubernetes.io/is-default-class: 'false'
+provisioner: openebs.io/provisioner-iscsi
